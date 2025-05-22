@@ -10,7 +10,7 @@ async fn main() {
 
     // Spawn the warp server
     tokio::spawn(async move {
-        server_for_http.run().await;
+        server_for_http.run(3030).await;
     });
 
     // Example: emit messages every 5 seconds

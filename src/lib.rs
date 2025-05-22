@@ -18,7 +18,7 @@ impl Server {
         }
     }
 
-    pub async fn run(self: Arc<Server>) {
+    pub async fn run(self: Arc<Server>, port: u16) {
         let clients_filter = warp::any().map(move || self.clients.clone());
 
         let events_route = warp::path("events")
@@ -34,7 +34,7 @@ impl Server {
                 let stream = warp::sse::keep_alive().stream(event_stream);
                 warp::sse::reply(stream)
             });
-        warp::serve(events_route).run(([0, 0, 0, 0], 3030)).await;
+        warp::serve(events_route).run(([0, 0, 0, 0], port)).await;
     }
 
     pub async fn emit(&self, msg: &str) {
