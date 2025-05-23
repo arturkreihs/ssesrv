@@ -1,9 +1,8 @@
-use std::sync::Arc;
 use ssesrv::Server;
 
 #[tokio::main]
 async fn main() {
-    let sse = Arc::new(Server::new());
+    let sse = Server::new();
 
     // Spawn the warp server
     {

@@ -7,6 +7,7 @@ use tokio_stream::wrappers::UnboundedReceiverStream;
 
 type Clients = Arc<Mutex<Vec<mpsc::UnboundedSender<Event>>>>;
 
+#[derive(Debug, Clone)]
 pub struct Server {
     clients: Clients,
 }
@@ -18,7 +19,7 @@ impl Server {
         }
     }
 
-    pub async fn run(self: Arc<Server>, port: u16) {
+    pub async fn run(self: Server, port: u16) {
         let filter = warp::any().map(move || self.clients.clone());
         let route = warp::path("events")
             .and(warp::get())
