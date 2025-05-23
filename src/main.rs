@@ -14,7 +14,7 @@ async fn main() {
 
     // Example: emit messages every 5 seconds
     loop {
-        sse.emit("Hello SSE clients!").await;
+        sse.emit("test", "Hello SSE clients!").await;
         tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
     }
 }

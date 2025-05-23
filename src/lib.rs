@@ -37,10 +37,12 @@ impl Server {
         warp::serve(route).run(([0, 0, 0, 0], port)).await;
     }
 
-    pub async fn emit(&self, msg: &str) {
+    pub async fn emit<T: Into<String> + Clone>(&self, name: T, msg: T) {
         let mut clients = self.clients.lock().await;
         clients.retain(|client| {
-            let event = Event::default().data(msg.to_owned());
+            let event = Event::default()
+                .event(name.clone())
+                .data(msg.clone());
             client.send(event).is_ok()
         });
     }
