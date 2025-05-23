@@ -19,11 +19,10 @@ impl Server {
     }
 
     pub async fn run(self: Arc<Server>, port: u16) {
-        let clients_filter = warp::any().map(move || self.clients.clone());
-
-        let events_route = warp::path("events")
+        let filter = warp::any().map(move || self.clients.clone());
+        let route = warp::path("events")
             .and(warp::get())
-            .and(clients_filter)
+            .and(filter)
             .map(|clients: Clients| {
                 let (tx, rx) = mpsc::unbounded_channel();
                 tokio::spawn(async move {
@@ -34,7 +33,7 @@ impl Server {
                 let stream = warp::sse::keep_alive().stream(event_stream);
                 warp::sse::reply(stream)
             });
-        warp::serve(events_route).run(([0, 0, 0, 0], port)).await;
+        warp::serve(route).run(([0, 0, 0, 0], port)).await;
     }
 
     pub async fn emit(&self, msg: &str) {
